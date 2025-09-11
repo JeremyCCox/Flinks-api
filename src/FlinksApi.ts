@@ -43,10 +43,11 @@ export class FlinksApi {
         this["Authorization"] = config["Authorization"];
         this.axios = config.axiosInstance ?? axios.create()
         this.logger = {
-            log: config.loggerInstance?.log ?? console.log,
-            error: config.loggerInstance?.error ?? console.error,
-            warn: config.loggerInstance?.warn ?? console.warn,
-            debug: config.loggerInstance?.debug ?? console.debug,
+            log: config.logger?.log ?? console.log,
+            error: config.logger?.error ?? console.error,
+            info: config.logger?.info ?? console.info,
+            warn: config.logger?.warn ?? console.warn,
+            debug: config.logger?.debug ?? console.debug,
         };
     }
     protected country: CountryShortcode;
@@ -56,7 +57,7 @@ export class FlinksApi {
     protected "flinks-auth-key": string;
     protected "Authorization": string;
     protected axios: AxiosInstance;
-    protected logger: Required<Logger> | Console = console;
+    protected logger: Required<Logger> ;
 
     private REQUEST_TIMEOUT = 30000;
 
