@@ -15,7 +15,7 @@ export interface FlinksApiConfiguration {
     url:string,
     apiKey: string,
     authKey:string,
-    authorization:string,
+    bearerToken:string,
     axiosInstance?: AxiosInstance,
     logger?:Logger,
 }
