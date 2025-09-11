@@ -1,197 +1,475 @@
-import { AxiosInstance } from "axios";
+import { AxiosInstance, AxiosRequestConfig } from "axios";
 
 //#region src/types.d.ts
-
-/**
- * ============================
- * Flinks API Types
- * ============================
- * This file defines request/response types for interacting with the Flinks API.
- * Based on: https://docs.flinks.com/reference
- */
-/**
- * Supported country shortcodes for Flinks API.
- */
-declare enum CountryShortcode {
-  Canada = "CA",
-  UnitedStates = "US",
+interface Logger {
+  log(message: string, ...optionalParams: any[]): void;
+  info(message: string, ...optionalParams: any[]): void;
+  error(message: string, ...optionalParams: any[]): void;
+  warn?(message: string, ...optionalParams: any[]): void;
+  debug?(message: string, ...optionalParams: any[]): void;
 }
-/**
- * Supported currencies.
- */
+interface FlinksApiConfiguration {
+  country: CountryShortcode;
+  customerId: string;
+  url: string;
+  apiKey: string;
+  authKey: string;
+  authorization: string;
+  axiosInstance?: AxiosInstance;
+  logger?: Logger;
+}
 declare enum AllowedCurrencyTypes {
-  CAD = "CAD",
-  USD = "USD",
+  "cad" = "CAD",
+  "usd" = "USD",
 }
-/**
- * Security challenge types during authorization (e.g. MFA).
- */
-declare enum FlinksSecurityType {
-  QuestionAndAnswer = "QuestionAndAnswer",
-  Token = "Token",
-  Image = "Image",
+declare enum ProvincesShortcode {
+  "Alberta" = "AB",
+  "British Columbia" = "BC",
+  "Manitoba" = "MB",
+  "New Brunswick" = "NB",
+  "Newfoundland and Labrador" = "NL",
+  "Northwest Territories" = "NT",
+  "Nova Scotia" = "NS",
+  "Ontario" = "ON",
+  "Prince Edward Island" = "PE",
+  "Quebec" = "QC",
+  "Saskatchewan" = "SK",
+  "Yukon" = "YT",
+  "Nunavut" = "NU",
 }
-/**
- * Flinks async package statuses.
- * Flinks uses async polling for some endpoints; responses may be "Pending".
- */
-declare enum EFlinksCodes {
-  Pending = "Pending",
-  Done = "Done",
-  Error = "Error",
+declare enum StatesShortcode {
+  Alabama = "AL",
+  Alaska = "AK",
+  Arizona = "AZ",
+  Arkansas = "AR",
+  California = "CA",
+  Colorado = "CO",
+  Connecticut = "CT",
+  Delaware = "DE",
+  Florida = "FL",
+  Georgia = "GA",
+  Hawaii = "HI",
+  Idaho = "ID",
+  Illinois = "IL",
+  Indiana = "IN",
+  Iowa = "IA",
+  Kansas = "KS",
+  Kentucky = "KY",
+  Louisiana = "LA",
+  Maine = "ME",
+  Maryland = "MD",
+  Massachusetts = "MA",
+  Michigan = "MI",
+  Minnesota = "MN",
+  Mississippi = "MS",
+  Missouri = "MO",
+  Montana = "MT",
+  Nebraska = "NE",
+  Nevada = "NV",
+  NewHampshire = "NH",
+  NewJersey = "NJ",
+  NewMexico = "NM",
+  NewYork = "NY",
+  NorthCarolina = "NC",
+  NorthDakota = "ND",
+  Ohio = "OH",
+  Oklahoma = "OK",
+  Oregon = "OR",
+  Pennsylvania = "PA",
+  RhodeIsland = "RI",
+  SouthCarolina = "SC",
+  SouthDakota = "SD",
+  Tennessee = "TN",
+  Texas = "TX",
+  Utah = "UT",
+  Vermont = "VT",
+  Virginia = "VA",
+  Washington = "WA",
+  WestVirginia = "WV",
+  Wisconsin = "WI",
+  Wyoming = "WY",
 }
-/**
- * MFA (Multi-factor Authentication) prompt types.
- */
-declare enum MFAType {
-  Question = "Question",
-  Password = "Password",
-  Token = "Token",
+declare enum CountryShortcode {
+  "Canada" = "CA",
+  "United States" = "US",
 }
-/**
- * Response types for generic handling.
- */
-declare enum ResponseType {
-  Authorize = "Authorize",
-  Accounts = "Accounts",
-  Details = "Details",
-  Transactions = "Transactions",
-  Summary = "Summary",
-  Token = "Token",
+type CaAddress = {
+  CivicAddress: string;
+  City: string;
+  Province: ProvincesShortcode;
+  PostalCode: string;
+  POBox?: string;
+  Country: CountryShortcode;
+};
+interface WordLists {
+  adjectives: string[];
+  verbs: string[];
+  nouns: string[];
 }
-/**
- * Standard Flinks API response envelope.
- */
-interface FlinksResponse {
-  RequestId: string;
-  Links?: string[];
-  Code?: string;
+interface PendingPackage {
+  requestId?: string;
+  headers: Record<string, string>;
+  PathParam: string;
+  FlinksCode?: string;
+  Body?: string;
+  Config?: AxiosRequestConfig;
+  Links?: [{
+    rel: string;
+    href: string;
+    example: string;
+  }];
+  HttpStatusCode: number;
   Message?: string;
-  IsPending?: boolean;
+  RequestId?: string;
 }
-/**
- * Options for Authorize request.
- * https://docs.flinks.com/reference/post-sandboxauthorize
- */
-interface FlinksAuthorizeOptions {
-  LoginId?: string;
-  Username?: string;
-  Password?: string;
-  MFAType?: MFAType;
-  Answers?: string[];
-  Save?: boolean;
+interface SecurityChallenge {
+  Type: FlinksSecurityType;
+  Prompt: string;
+  Iterables: string[];
 }
-/**
- * Response returned from Authorize.
- */
-interface IFlinksAuthorize extends FlinksResponse {
-  Authorization?: string;
-  AccountsCount?: number;
-  Accounts?: IFlinksAccount[];
-  Challenge?: {
-    Type: FlinksSecurityType;
-    Question?: string;
-  };
+interface SecurityResponses {
+  [key: string]: string[];
 }
-/**
- * Response for Account Details.
- * https://docs.flinks.com/reference/post-sandboxaccounts
- */
-interface IFlinksDetails extends FlinksResponse {
-  Accounts?: IFlinksAccount[];
+declare enum DaysOfTransactionsOptions {
+  "Days90" = "Days90",
+  "Days365" = "Days365",
 }
-/**
- * Response for Summary data.
- * https://docs.flinks.com/reference/post-sandboxsummary
- */
-interface IFlinksSummary extends FlinksResponse {
-  Accounts?: IFlinksAccount[];
-  Transactions?: IFlinksTransaction[];
+interface BankInfoOptions {
+  /**
+   * Contains a valid Authorize Token and represents a successful call to the /Authorize endpoint.
+   */
+  requestId?: string;
+  /**
+   * Enable Instant Bank Verification (IBV).
+   * Defaults to false.
+   */
+  WithAccountIdentity?: boolean;
+  /**
+   * Include customer (KYC) information in account details.
+   * Defaults to false.
+   */
+  WithKYC?: boolean;
+  /**
+   * Include transactions in account details.
+   * Defaults to false.
+   */
+  WithTransactions?: boolean;
+  /**
+   * Include balances in account details.
+   * Defaults to false.
+   */
+  WithBalance?: boolean;
+  /**
+   * Limit the session to specific account IDs.
+   */
+  AccountsFilter?: string[];
+  /**
+   * Number of days of transaction history.
+   * Defaults to "Days90".
+   * - "Days90"
+   * - "Days365"
+   */
+  DaysOfTransactions?: DaysOfTransactionsOptions;
+  /**
+   * Enable PDF banking statements (Base64).
+   * Defaults to false.
+   * Must be enabled by Flinks support.
+   */
+  WithDetailsAndBankingStatements?: boolean;
+  /**
+   * Number of PDF banking statements to return.
+   */
+  NumberOfBankingStatements?: number;
 }
-/**
- * Response for AuthorizeToken.
- * https://docs.flinks.com/reference/post-sandboxauthorizetoken
- */
-interface IFlinksToken extends FlinksResponse {
-  LoginId: string;
-  AccessToken: string;
+interface FlinksTransactionDetails {
+  transactionId: string;
+  AccountID: string;
+  Key: string;
+  Signature: string;
+  FlinksAccountID: string;
+  FlinksLoginID: string;
+  Amount: number;
 }
-/**
- * Represents a financial account returned by Flinks.
- */
-interface IFlinksAccount {
+interface MFAQuestions {
+  Question: string;
+  Answer?: string;
+}
+interface Transaction {
+  Date: string;
+  Code: string | null;
+  Description: string;
+  Debit: number;
+  Credit: number;
+  Balance: number;
   Id: string;
-  Institution: string;
-  InstitutionId: string;
-  Name: string;
-  Number: string;
+}
+interface TransactionHistory {
+  Accounts: {
+    Transactions: Transaction[];
+  }[];
+}
+declare enum NumberOfStatements {
+  "Most Recent" = "MostRecent",
+  "Months 3" = "Months3",
+  "Months 12" = "Months12",
+}
+type StatementsByAccount = {
+  AccountNumber: string;
+  Statements: [{
+    UniqueId: string;
+    FileType: string;
+    Base64Bytes: Base64URLString;
+  }];
+};
+type AccountFromSummary = {
+  EftEligibleRatio: number;
+  ETransferEligibleRatio: number;
+  Title: string;
+  AccountNumber: string;
+  LastFourDigits?: string;
+  Balance: Balance;
   Category: string;
   Type: string;
   Currency: AllowedCurrencyTypes;
-  Balance?: IFlinksBalance;
-  Transactions?: IFlinksTransaction[];
+  Holder: {
+    Name: string;
+    Address: CaAddress;
+    Email: string;
+    Id: string;
+  };
+};
+interface BankAccountDetails {
+  FinancialInstitutionNumber: string;
+  BranchTransitNumber: string;
+  AccountNumber: string;
+}
+interface FlinksDataOptions {
+  includeHeaders?: FlinksHeaderOptions[];
+  headers?: Record<string, string>;
+  requestId?: string;
+  pathParams?: string[];
+  queryParams?: Record<string, string>;
+  customTimeout?: number;
+}
+interface FlinksPostOptions extends FlinksDataOptions {
+  body?: unknown;
+}
+interface FlinksPatchOptions extends FlinksDataOptions {
+  body?: unknown;
+}
+interface FlinksGetOptions extends FlinksDataOptions {}
+interface FlinksDeleteOptions extends FlinksDataOptions {}
+declare enum FlinksHeaderOptions {
+  AuthKey = "AuthKey",
+  ApiKey = "ApiKey",
+  Authorization = "Authorization",
 }
 /**
- * Balance object for an account.
+ * This could probably be extensible, for the different Security Types
  */
-interface IFlinksBalance {
-  Current: number;
+interface FlinksAuthorizeOptions extends BankInfoOptions {
+  mostRecentCached?: boolean;
+  save?: boolean;
+  mfaResponse?: SecurityResponses[];
+  tag?: string;
+  customTimeout?: number;
+  requestId?: string;
+}
+declare enum FlinksSecurityType {
+  "QuestionAndAnswer" = "QuestionAndAnswer",
+  "ImageSelection" = "ImageSelection",
+  "MultipleChoice" = "MultipleChoice",
+  "TextOrCall" = "TextOrCall",
+  "WaitUntilEUAccept" = "WaitUntilEUAccept",
+  "MultipleChoiceMultipleAnswers" = "MultipleChoiceMultipleAnswers",
+}
+type Balance = {
   Available?: number;
+  Current?: number;
   Limit?: number;
-  Currency: AllowedCurrencyTypes;
-  LastUpdated?: string;
-}
-/**
- * Transaction object for an account.
- */
-interface IFlinksTransaction {
-  Id: string;
-  AccountId: string;
-  Description: string;
-  Date: string;
-  Amount: number;
+};
+interface IFlinksBankAccountDetails {
+  Transactions: IFlinksTransaction[];
+  TransitNumber: string;
+  InstitutionNumber: string;
+  OverdraftLimit: number;
+  Title: string;
+  AccountNumber: string;
+  LastFourDigits: string;
+  Balance: IFlinksBalance;
+  Category: string;
   Type: string;
   Currency: AllowedCurrencyTypes;
+  Holder: IFlinksHolder;
+  AccountType: string;
+  Id: string;
 }
-/**
- * Flinks async response wrapper.
- */
-interface PendingPackage {
-  Code: EFlinksCodes;
+interface IFlinksHolder {
+  Name: string;
+  Address: IFlinksAddress;
+  Email: string;
+  PhoneNumber: string;
+}
+interface IFlinksBalance {
+  Available?: number;
+  Current?: number;
+  Limit?: number;
+}
+interface IFlinksAddress {
+  CivicAddress: string;
+  City: string;
+  Province: ProvincesShortcode | StatesShortcode;
+  PostalCode: string;
+  POBox?: string;
+  Country: CountryShortcode;
+}
+interface IFlinksLogin {
+  Username: string;
+  IsScheduledRefresh: boolean;
+  LastRefresh: string;
+  Type: string;
+  Id: string;
+}
+interface IFlinksTransaction {
+  Date: string;
+  Code?: string | null;
+  Description: string;
+  Debit?: number | null;
+  Credit?: number | null;
+  Balance: number;
+  Id: string;
+}
+interface IFlinksAccountCredential {
+  loginId: string;
+  accountId: string;
+  institution: string;
+  country: CountryShortcode;
+  securityType?: FlinksSecurityType;
+}
+interface IFlinksLink {
+  rel: string;
+  href: string;
+  example: string;
+}
+interface FlinksResponse {
+  HttpStatusCode: number;
+  StatusCode?: number;
+  Message?: string;
+  FlinksCode?: string;
+  RequestId?: string;
+  [key: string]: any;
+  PathParam?: string;
+  ApiKeyNeeded?: boolean;
+}
+interface OnboardEditOrganizationDto {
+  organizationId: string;
+  organizationName: string;
+  organizationCountry: CountryShortcode;
+  organizationPlan: string;
+}
+interface OnboardEditUserDto {
+  userId: string;
+  firstName: string;
+  lastName?: string;
+  email: string;
+  country: CountryShortcode;
+}
+interface IFlinksResponse {
+  HttpStatusCode: number;
+  Links?: IFlinksLink[];
+  Login?: {
+    Username: string;
+    IsScheduledRefresh: boolean;
+    LastRefresh: string;
+    Type: string;
+    Id: string;
+  };
+  StatementsByAccount?: IFlinksStatementsByAccount[];
+  SecurityChallenges?: SecurityChallenge[];
+  InstitutionName?: string;
+  InstitutionId?: number;
+  Institution?: string;
+  RequestId?: string;
+  Accounts?: IFlinksBankAccountDetails[];
+  Message?: string;
+  Tag?: string;
+  FlinksCode?: EFlinksCodes;
+}
+interface IFlinksStatementsByAccount {
+  AccountNumber: string;
+  Statements: IFlinksStatement[];
+}
+interface IFlinksStatement {
+  UniqueId: string;
+  FileType: string;
+  Base64Bytes: string;
+}
+interface IFlinksToken extends IFlinksResponse {
+  Token: string;
+}
+interface IFlinksAuthorize extends IFlinksResponse {
   RequestId: string;
-  Links: string[];
+  Institution: string;
+  Links: IFlinksLink[];
 }
-/**
- * Logger interface for injecting a custom logger.
- */
-interface Logger {
-  debug(message: string, ...meta: any[]): void;
-  info(message: string, ...meta: any[]): void;
-  warn(message: string, ...meta: any[]): void;
-  error(message: string, ...meta: any[]): void;
+interface IFlinksDetails extends IFlinksResponse {
+  HttpStatusCode: number;
+  Accounts: IFlinksBankAccountDetails[];
+  Links: IFlinksLink[];
+  Tag: string;
+  InstitutionName: string;
+  Login: IFlinksLogin;
+  InstitutionId: number;
+  Institution: string;
+  RequestId: string;
 }
-/**
- * Flinks API configuration object.
- */
-interface FlinksApiConfiguration {
-  /** API base URL (e.g., https://api.flinks.com) */
-  baseUrl: string;
-  /** Flinks Customer ID (provided by Flinks) */
-  customerId: string;
-  /** Optional API key (AuthKey) */
-  authKey?: string;
-  /** Optional custom logger */
-  logger?: Logger;
-  /** Country context */
-  country?: CountryShortcode;
+interface IFlinksSummary extends IFlinksResponse {
+  Login: IFlinksLogin;
+  Tag: string;
+  InstitutionName: string;
+  InstitutionId: number;
+  Institution: string;
+  RequestId: string;
+  Accounts: IFlinksBankAccountDetails[];
+  Links: IFlinksLink[];
 }
-/**
- * Supported headers in Flinks requests.
- */
-declare enum FlinksHeaderOptions {
-  Accept = "accept",
-  ContentType = "content-type",
-  AuthKey = "authkey",
+interface FlinksAuthorizeToken {
+  token: string;
+  timestamp: number;
+}
+declare enum EFlinksCodes {
+  "INVALID_LOGIN" = "INVALID_LOGIN",
+  "METHOD_NOT_AVAILABLE" = "METHOD_NOT_AVAILABLE",
+  "INVALID_SECURITY_RESPONSE" = "INVALID_SECURITY_RESPONSE",
+  "UNKNOWN_CHALLENGE_KEY" = "UNKNOWN_CHALLENGE_KEY",
+}
+declare enum MFAType {
+  "Cached" = "Cached",
+  "ActionRequired" = "ActionRequired",
+}
+declare enum ResponseType {
+  GetAccountsDetail = "GetAccountsDetail",
+  KYC = "KYC",
+}
+interface ICachedFlinksWebhook {
+  ResponseType: ResponseType;
+  HttpStatusCode: number;
+  Accounts?: IFlinksBankAccountDetails[];
+  Login: IFlinksLogin;
+  Institution: string;
+  RequestId: string;
+  Tag?: string;
+}
+interface IFlinksWebhookTag {
+  origin: string;
+  [key: string]: string;
+}
+interface IUniqueLogin {
+  institution: string;
+  flinksId: string;
+  title?: string;
+  lastRefresh: Date;
+  authorizedAccountIds: string[];
 }
 //#endregion
 //#region src/FlinksApi.d.ts
@@ -213,11 +491,11 @@ declare class FlinksApi {
   protected country: CountryShortcode;
   protected customerId: string;
   protected url: string;
-  protected "x-api-key": string;
-  protected "flinks-auth-key": string;
-  protected "Authorization": string;
+  protected apiKey: string;
+  protected authKey: string;
+  protected authorization: string;
   protected axios: AxiosInstance;
-  protected logger: Required<Logger> | Console;
+  protected logger: Required<Logger>;
   private REQUEST_TIMEOUT;
   /**
    * Returns a Flinks URL for being registered under a VoPay account,
@@ -270,7 +548,7 @@ declare class FlinksApi {
    * @param path
    * @param options
    */
-  get(path: string, options: FlinksGetOptions): Promise<any>;
+  get(path: string, options: FlinksGetOptions): Promise<IFlinksResponse | FlinksResponse>;
   /**
    *  Delete method for our Flinks API
    *
@@ -282,4 +560,4 @@ declare class FlinksApi {
   delete(path: string, options: FlinksDeleteOptions): Promise<FlinksResponse>;
 }
 //#endregion
-export { AllowedCurrencyTypes, CountryShortcode, EFlinksCodes, FlinksApi, FlinksApiConfiguration, FlinksAuthorizeOptions, FlinksHeaderOptions, FlinksResponse, FlinksSecurityType, IFlinksAccount, IFlinksAuthorize, IFlinksBalance, IFlinksDetails, IFlinksSummary, IFlinksToken, IFlinksTransaction, Logger, MFAType, PendingPackage, ResponseType };
+export { AccountFromSummary, AllowedCurrencyTypes, Balance, BankAccountDetails, BankInfoOptions, CaAddress, CountryShortcode, DaysOfTransactionsOptions, EFlinksCodes, FlinksApi, FlinksApiConfiguration, FlinksAuthorizeOptions, FlinksAuthorizeToken, FlinksDataOptions, FlinksDeleteOptions, FlinksGetOptions, FlinksHeaderOptions, FlinksPatchOptions, FlinksPostOptions, FlinksResponse, FlinksSecurityType, FlinksTransactionDetails, ICachedFlinksWebhook, IFlinksAccountCredential, IFlinksAddress, IFlinksAuthorize, IFlinksBalance, IFlinksBankAccountDetails, IFlinksDetails, IFlinksHolder, IFlinksLink, IFlinksLogin, IFlinksResponse, IFlinksStatement, IFlinksStatementsByAccount, IFlinksSummary, IFlinksToken, IFlinksTransaction, IFlinksWebhookTag, IUniqueLogin, Logger, MFAQuestions, MFAType, NumberOfStatements, OnboardEditOrganizationDto, OnboardEditUserDto, PendingPackage, ProvincesShortcode, ResponseType, SecurityChallenge, SecurityResponses, StatementsByAccount, StatesShortcode, Transaction, TransactionHistory, WordLists };
