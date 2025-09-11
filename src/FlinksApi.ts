@@ -38,10 +38,17 @@ export class FlinksApi {
         this.country = config.country;
         this.customerId = config.customerId;
         this.url=config.url;
-        this["x-api-key"] = config["x-api-key"];
-        this["flinks-auth-key"] = config["flinks-auth-key"];
-        this["Authorization"] = config["Authorization"];
-        this.axios = config.axiosInstance ?? axios.create()
+        this.apiKey = config.apiKey;
+        this.authKey = config.authKey;
+        this.authorization = config.authorization;
+        this.axios = config.axiosInstance ?? axios.create({
+            baseURL: `${this.url}/${this.customerId}`,
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json",
+                ...(this.authKey ? { "flinks-auth-key": this.authKey } : {}),
+            },
+        })
         this.logger = {
             log: config.logger?.log ?? console.log,
             error: config.logger?.error ?? console.error,
@@ -53,9 +60,9 @@ export class FlinksApi {
     protected country: CountryShortcode;
     protected customerId: string;
     protected url: string;
-    protected "x-api-key": string;
-    protected "flinks-auth-key": string;
-    protected "Authorization": string;
+    protected apiKey: string;
+    protected authKey: string;
+    protected authorization: string;
     protected axios: AxiosInstance;
     protected logger: Required<Logger> ;
 
@@ -75,7 +82,7 @@ export class FlinksApi {
         options?: FlinksDataOptions,
     ): string {
         let pathParams: string = "";
-        options?.pathParams?.map((param) => {
+        options?.pathParams?.map((param:string) => {
             pathParams = `${pathParams}/${param}`;
         });
         const queryParams = new URLSearchParams();
@@ -89,7 +96,7 @@ export class FlinksApi {
         const data = await this.post<IFlinksToken>(
             "BankingServices/GenerateAuthorizeToken",
             {
-                includeHeaders: [FlinksHeaderOptions.Authkey],
+                includeHeaders: [FlinksHeaderOptions.AuthKey],
             },
         );
         if (data.HttpStatusCode !== 200) {
@@ -245,10 +252,12 @@ export class FlinksApi {
             throw new Error("No locale set for Flinks API!");
         }
 
-        const headers = options.headers || {};
-        options.includeHeaders?.map((header) => {
-            headers[header] = this[header];
-        });
+        const headers: Record<string, string> = {
+            ...options.headers,
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.authorization }),
+        };
 
         const response: AxiosResponse<T> =
             await this.axios.post<T>(
@@ -305,14 +314,13 @@ export class FlinksApi {
             throw new Error("No locale set for Flinks API!");
         }
 
-        const headers:Record<string,string> = {
-            accept: "application/json",
-            "content-type": "application/json",
+        const headers: Record<string, string> = {
             ...options.headers,
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.authorization }),
         };
-        options.includeHeaders?.map((header) => {
-            headers[header] = this[header];
-        });
+
         let pathParams: string = "";
         options.pathParams?.map((param) => {
             pathParams = `${pathParams}/${param}`;
@@ -365,14 +373,13 @@ export class FlinksApi {
             throw new Error("No locale set for Flinks API!");
         }
 
-        const headers:Record<string,string> = {
-            accept: "application/json",
-            "content-type": "application/json",
+        const headers: Record<string, string> = {
             ...options.headers,
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.authorization }),
         };
-        options.includeHeaders?.map((header) => {
-            headers[header] = this[header];
-        });
+
 
         const response = await this.axios.get<FlinksResponse>(
             this.flinksApiUrlBuilder(path, options),
@@ -424,14 +431,12 @@ export class FlinksApi {
             throw new Error("No locale set for Flinks API!");
         }
 
-        const headers:Record<string,string> = {
-            accept: "application/json",
-            "content-type": "application/json",
+        const headers: Record<string, string> = {
             ...options.headers,
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.authorization }),
         };
-        options.includeHeaders?.map((header) => {
-            headers[header] = this[header];
-        });
 
         const response = await this.axios.delete<FlinksResponse>(
             this.flinksApiUrlBuilder(path, options),

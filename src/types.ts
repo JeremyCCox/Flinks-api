@@ -13,9 +13,9 @@ export interface FlinksApiConfiguration {
     country: CountryShortcode,
         customerId:string,
     url:string,
-    "x-api-key": string,
-    "flinks-auth-key":string,
-    "Authorization":string,
+    apiKey: string,
+    authKey:string,
+    authorization:string,
     axiosInstance?: AxiosInstance,
     logger?:Logger,
 }
@@ -119,7 +119,7 @@ export interface WordLists {
 
 export interface PendingPackage {
     requestId?: string;
-    headers: { [key: string]: string };
+    headers: Record<string, string>;
     PathParam: string;
     FlinksCode?: string;
     Body?: string;
@@ -293,9 +293,9 @@ export interface FlinksGetOptions extends FlinksDataOptions {}
 export interface FlinksDeleteOptions extends FlinksDataOptions {}
 
 export enum FlinksHeaderOptions {
-    Authkey = "flinks-auth-key",
-    XApiKey = "x-api-key",
-    BearerToken = "Authorization",
+    AuthKey = "AuthKey",
+    ApiKey = "ApiKey",
+    Authorization = "Authorization",
 }
 
 /**
