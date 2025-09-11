@@ -256,7 +256,7 @@ export class FlinksApi {
             ...options.headers,
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
-            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.bearerToken }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.BearerToken) && { "Authorization": this.bearerToken }),
         };
 
         const response: AxiosResponse<T> =
@@ -318,7 +318,7 @@ export class FlinksApi {
             ...options.headers,
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
-            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.bearerToken }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.BearerToken) && { "Authorization": this.bearerToken }),
         };
 
         let pathParams: string = "";
@@ -377,7 +377,7 @@ export class FlinksApi {
             ...options.headers,
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
-            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.bearerToken }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.BearerToken) && { "Authorization": this.bearerToken }),
         };
 
 
@@ -435,7 +435,7 @@ export class FlinksApi {
             ...options.headers,
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.ApiKey) && { "x-api-key": this.apiKey }),
             ...(options.includeHeaders?.includes(FlinksHeaderOptions.AuthKey) && { "flinks-auth-key": this.authKey }),
-            ...(options.includeHeaders?.includes(FlinksHeaderOptions.Authorization) && { "Authorization": this.bearerToken }),
+            ...(options.includeHeaders?.includes(FlinksHeaderOptions.BearerToken) && { "Authorization": this.bearerToken }),
         };
 
         const response = await this.axios.delete<FlinksResponse>(

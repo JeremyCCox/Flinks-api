@@ -295,7 +295,7 @@ export interface FlinksDeleteOptions extends FlinksDataOptions {}
 export enum FlinksHeaderOptions {
     AuthKey = "AuthKey",
     ApiKey = "ApiKey",
-    BearerToken = "Authorization",
+    BearerToken = "BearerToken",
 }
 
 /**
