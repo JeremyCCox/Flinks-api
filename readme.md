@@ -19,8 +19,24 @@ All configuration for `FlinksApi` should be passed **directly to the constructor
 | Parameter       | Type                 | Description                                                   |
 |-----------------|--------------------|---------------------------------------------------------------|
 | `axiosInstance` | `AxiosInstance`     | Custom Axios instance. Required if you want to inject Nest.js `HttpService`. |
-| `loggerInstance` | `Logger`           | Custom logger. Defaults to `console.log`, `console.error`, etc. |
+| `logger`        | `Logger`           | Custom logger. Defaults to `console.log`, `console.error`, etc. |
+_the logger type is custom, and requires that the logger you provide implements 'log' and 'error'_
+<details>
 
+<summary><i>
+Logger type</i>
+</summary>
+
+```typescript
+    export interface Logger {
+        log(message: string, ...optionalParams: any[]): void;
+        error(message: string, ...optionalParams: any[]): void;
+        info?(message: string, ...optionalParams: any[]): void;
+        warn?(message: string, ...optionalParams: any[]): void;
+        debug?(message: string, ...optionalParams: any[]): void;
+    }
+```
+</details>
 ---
 
  ## Using Flinks-api as a Nest.js service
