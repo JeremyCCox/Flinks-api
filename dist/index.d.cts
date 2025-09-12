@@ -218,7 +218,7 @@ type StatementsByAccount = {
   Statements: [{
     UniqueId: string;
     FileType: string;
-    Base64Bytes: Base64URLString;
+    Base64Bytes: string;
   }];
 };
 type AccountFromSummary = {
