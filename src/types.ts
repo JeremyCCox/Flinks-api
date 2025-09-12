@@ -246,7 +246,7 @@ export enum NumberOfStatements {
 export type StatementsByAccount = {
     AccountNumber: string;
     Statements: [
-        { UniqueId: string; FileType: string; Base64Bytes: Base64URLString },
+        { UniqueId: string; FileType: string; Base64Bytes: string },
     ];
 };
 
