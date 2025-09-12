@@ -42,6 +42,31 @@ export interface Logger {
 ```
 
 </details>
+---
+
+## Available Methods in FlinksApi
+
+The `FlinksApi` class provides methods to interact with the Flinks backend for performing CRUD operations and authorization-related tasks. Users of this package obtain a country-specific instance via `useCountry()` and then call the methods listed below.
+
+### Method Overview
+
+| Method | Description                                                                                                          |
+|--------|----------------------------------------------------------------------------------------------------------------------|
+| `getFlinksUrl()` | Returns the base URL for the registered Flinks account.                                                              |
+| `getAuthorizeToken()` | Generates an authorization token from Flinks, used for subsequent requests.                                          |
+| `getRequestId(loginId: string, options?: FlinksAuthorizeOptions)` | Generates an authorize token and returns a request ID associated with the provided login ID.                         |
+| `receivePendingData<T>(pendingPackage: PendingPackage)` | Polls the Flinks API for pending data until completion (handling 202 responses).                                     |
+| `post<T>(path: string, options: FlinksPostOptions)` | Sends a POST request to the Flinks API and handles pending responses if any.                                         |
+| `patch<T>(path: string, options: FlinksPatchOptions)` | Sends a PATCH request to the Flinks API and handles pending responses if any.                                        |
+| `get(path: string, options: FlinksGetOptions)` | Sends a GET request to the Flinks API and handles pending responses if any.                                          |
+| `delete(path: string, options: FlinksDeleteOptions)` | Sends a DELETE request to the Flinks API and handles pending responses if any.                                       |
+
+### Notes
+
+- All methods automatically manage headers including API key, auth key, and bearer token when requested.
+- Methods handle asynchronous 202 responses by polling with `receivePendingData` until the operation completes.
+- `useCountry()` must be used first to obtain the correct country-specific instance of `FlinksApi`.
+
 
 ---
 
