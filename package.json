@@ -1,11 +1,11 @@
 {
   "name": "flinks-api",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "TypeScript wrapper for Flinks API, designed primarily for Nest.js Integration. Developed to work for Clove-Financial, but expanded personally by Jeremy Cox.",
   "keywords": ["flinks", "api", "typescript", "nestjs", "banking"],
   "homepage": "https://github.com/JeremyCCox/Flinks-api",
   "engines": {
-  "node": ">=22.12.0"
+  "node": ">=18"
   },
   "repository": {
     "type": "git",
