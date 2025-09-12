@@ -22,11 +22,9 @@ All configuration for `FlinksApi` should be passed **directly to the constructor
 | `loggerInstance` | `Logger`           | Custom logger. Defaults to `console.log`, `console.error`, etc. |
 
 ---
-#### Using Nest.js ConfigService for environment variables 
-<details>
-    <summary>
+
+ ## Using Flinks-api as a Nest.js service
 You can inject environment variables from a Nest.js ConfigService
-    </summary>
 
 ```typescript
 import {Injectable, Logger} from "@nestjs/common";
@@ -62,14 +60,10 @@ export class FlinksApiService {
     }
 }
 
-```
-</details>
-<details>
-    <summary>
-    And define the Country-Specific Services which we are referencing with moduleRef:
-    </summary>
 
-``` typescript
+// And define the Country-Specific Services which we are referencing with moduleRef:
+
+
 @Injectable()
 export class FlinksCaApiService extends FlinksApi {
     constructor(
@@ -110,4 +104,3 @@ export class FlinksUsApiService extends FlinksApi {
 }
 
 ```
-</details>
