@@ -181,7 +181,7 @@ export class FlinksApi {
         return response;
     }
 
-    async receivePendingData<T extends IFlinksResponse>(pendingPackage: PendingPackage): Promise<T>{
+    public async receivePendingData<T extends IFlinksResponse>(pendingPackage: PendingPackage): Promise<T>{
         const delay = (ms: number) => {
             return new Promise((resolve) => setTimeout(resolve, ms));
         };
@@ -244,7 +244,7 @@ export class FlinksApi {
      * @param path
      * @param body
      */
-    async post<T extends IFlinksResponse>(
+    public async post<T extends IFlinksResponse>(
         path: string,
         options: FlinksPostOptions,
     ): Promise<T> {
@@ -306,7 +306,7 @@ export class FlinksApi {
      * @param path
      * @param options
      */
-    async patch<T extends IFlinksResponse>(
+    public async patch<T extends IFlinksResponse>(
         path: string,
         options: FlinksPatchOptions,
     ): Promise<T> {
@@ -368,7 +368,7 @@ export class FlinksApi {
      * @param path
      * @param options
      */
-    async get(path: string, options: FlinksGetOptions) {
+    public async get(path: string, options: FlinksGetOptions) {
         if (!this.country) {
             throw new Error("No locale set for Flinks API!");
         }
@@ -423,7 +423,7 @@ export class FlinksApi {
      * @param path
      * @param options
      */
-    async delete(
+    public async delete(
         path: string,
         options: FlinksDeleteOptions,
     ): Promise<FlinksResponse> {
