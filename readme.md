@@ -44,6 +44,7 @@ export interface Logger {
 ```
 
 </details>
+
 ---
 
 ## Available Methods in FlinksApi
