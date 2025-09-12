@@ -67,6 +67,62 @@ The `FlinksApi` class provides methods to interact with the Flinks backend for p
 - Methods handle asynchronous 202 responses by polling with `receivePendingData` until the operation completes.
 - `useCountry()` must be used first to obtain the correct country-specific instance of `FlinksApi`.
 
+### Examples
+These examples come directly from the Nest.js project which I wrote this package for. 
+#### Authorize Example:
+
+```typescript
+   /**
+     * Fetches the GenerateAuthorizeToken endpoint for a Token that is required for all non-user Flinks operations
+     * https://docs.flinks.com/reference/generateauthorizetoken
+     * GenerateAuthorizeToken serves the same function as the /authorize/ endpoint, although It returns an AuthorizeToken instead of requestId.
+     *
+     * @Return AuthorizeToken Token string that is valid for 30 minutes.
+     * */
+    async getAuthorizeToken(countryShortcode: CountryShortcode): Promise<FlinksAuthorizeToken> {
+        const flinksApi = this.flinksApi.useCountry(countryShortcode);
+        return flinksApi.getAuthorizeToken();
+    }
+```
+
+#### GetAccountsDetail Example:
+
+```typescript
+     /**
+     * Gets account details for a Flinks entity.
+     *
+     * Returns the failed authorization response if there is an error.
+     *
+     * @param flinksCredentials
+     * @param getCachedDetails
+     */
+    async getAccountDetails(
+        requestId: string,
+        country: CountryShortcode,
+        options?:BankInfoOptions,
+    ): Promise<IFlinksDetails> {
+        const flinksApi = this.flinksApi.useCountry(country);
+        const body = {
+            requestId: requestId,
+            WithBalance: true,
+            ...options,
+        };
+    
+        const flinksDetails = await flinksApi.post<IFlinksDetails>(
+            "BankingServices/GetAccountsDetail",
+            {
+                includeHeaders: [FlinksHeaderOptions.ApiKey],
+                body,
+                customTimeout: 300000, // Timeout set to 5 minutes
+            },
+        );
+        if (!flinksDetails) {
+        throw new Error("Flinks Details fetch failed!");
+    }
+    
+    return flinksDetails;
+    }
+```
 
 ---
 
