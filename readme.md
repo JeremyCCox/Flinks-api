@@ -1,6 +1,8 @@
 # Flinks API Wrapper for TypeScript / Nest.js
 
-A TypeScript wrapper for the [Flinks API](https://docs.flinks.io/), providing country-specific Flinks services for Canada and the United States. This package allows you to create instances of the Flinks API with full type safety and Nest.js integration.
+A TypeScript wrapper for the [Flinks API](https://docs.flinks.io/), providing a Flinks API service for Canada and the United States. 
+This package does not (yet?) provide a wrapper for each endpoint Flinks provides, but instead lets you manage the Axios configuration for both US and CA instances
+along with your secrets and ASYNC response handling. Please see [Examples](#Examples) for usage examples!
 
 Flinks API helps developers access bank account data, financial institution information, and authorization workflows for customers in supported countries.
 
