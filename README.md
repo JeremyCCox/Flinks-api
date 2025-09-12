@@ -82,7 +82,7 @@ These examples come directly from the Nest.js project which I wrote this package
      *
      * @Return AuthorizeToken Token string that is valid for 30 minutes.
      * */
-    async getAuthorizeToken(countryShortcode: CountryShortcode): Promise<FlinksAuthorizeToken> {
+    async function getAuthorizeToken(countryShortcode: CountryShortcode): Promise<FlinksAuthorizeToken> {
         const flinksApi = this.flinksApi.useCountry(countryShortcode);
         return flinksApi.getAuthorizeToken();
     }
@@ -99,7 +99,7 @@ These examples come directly from the Nest.js project which I wrote this package
      * @param flinksCredentials
      * @param getCachedDetails
      */
-    async getAccountDetails(
+    async function getAccountDetails(
         requestId: string,
         country: CountryShortcode,
         options?:BankInfoOptions,
