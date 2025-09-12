@@ -23,27 +23,91 @@ All configuration for `FlinksApi` should be passed **directly to the constructor
 
 ---
 #### Using Nest.js ConfigService for environment variables 
-You can inject environment variables from Nest.js `ConfigService:`
+<details>
+    <summary>
+You can inject environment variables from a Nest.js ConfigService
+    </summary>
+
 ```typescript
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import {Injectable, Logger} from "@nestjs/common";
 import { FlinksApi } from "flinks-api";
-import { CountryShortcode } from "flinks-api/dist/types"; // adjust path as needed
+import { CountryShortcode } from "flinks-api/dist/index";
+import {AppConfigService} from "../app-config/app-config.service";
+import {HttpService} from "@nestjs/axios";
+import {ModuleRef} from "@nestjs/core";
+
 
 @Injectable()
-export class MyService extends FlinksApi {
-    constructor(configService: ConfigService) {
+export class FlinksApiService {
+    constructor(
+        protected readonly moduleRef: ModuleRef,
+    ) {}
+    private readonly countryMap = {
+        [CountryShortcode.Canada]: FlinksCaApiService,
+        [CountryShortcode['United States']]: FlinksUsApiService,
+    } as const;
+
+    /**
+     * FlinksApi Factory method.
+     *
+     * Will return an instance of the FlinksApi class with the specified Countries API requirements.
+     *
+     * Will throw an error if you manage to provide a non-enumerated Country Code.
+     *
+     * @param country
+     */
+    useCountry(country: CountryShortcode):FlinksCaApiService| FlinksUsApiService {
+        const service = this.moduleRef.get(this.countryMap[country], { strict: false });
+        return service;
+    }
+}
+
+```
+</details>
+<details>
+    <summary>
+    And define the Country-Specific Services which we are referencing with moduleRef:
+    </summary>
+
+``` typescript
+@Injectable()
+export class FlinksCaApiService extends FlinksApi {
+    constructor(
+        protected readonly configService: AppConfigService,
+        protected readonly httpService: HttpService,
+    ) {
+
         super({
-            country: CountryShortcode.Canada,          // required
-            customerId: configService.get<string>("FLINKS_CUSTOMER_ID"), // required
-            url: configService.get<string>("FLINKS_API_URL"),            // required
-            apiKey: configService.get<string>("FLINKS_API_KEY"),    // required
-            authKey: configService.get<string>("FLINKS_AUTH_KEY"), // required
-            authorization: configService.get<string>("FLINKS_AUTH_TOKEN"), // required
-            axiosInstance: undefined,                  // optional, pass HttpService.axiosRef if desired
-            loggerInstance: undefined                  // optional, defaults to console
+            country: CountryShortcode["United States"],
+            customerId: configService.flinksCaCustomerId,
+            url: configService.flinksCaUrl,
+            apiKey: configService.flinksCaXApiKey,
+            authKey: configService.flinksCaAuthKey,
+            bearerToken:configService.flinksCaBearerToken,
+            logger : new Logger(FlinksCaApiService.name),    // Using NestJs Logger
+            axiosInstance :  httpService.axiosRef            // Using NestJs httpService Axios
+        });
+    }
+}
+
+@Injectable()
+export class FlinksUsApiService extends FlinksApi {
+    constructor(
+        protected readonly configService: AppConfigService,
+        protected readonly httpService: HttpService,
+    ) {
+        super({
+            country: CountryShortcode["United States"],
+            customerId: configService.flinksUsCustomerId,
+            url: configService.flinksUsUrl,
+            apiKey: configService.flinksUsXApiKey,
+            authKey: configService.flinksUsAuthKey,
+            bearerToken:configService.flinksUsBearerToken,
+            logger : new Logger(FlinksUsApiService.name),   // Using NestJs Logger
+            axiosInstance :  httpService.axiosRef           // Using NestJs httpService Axios
         });
     }
 }
 
 ```
+</details>
