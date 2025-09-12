@@ -3,8 +3,8 @@ import { AxiosInstance, AxiosRequestConfig } from "axios";
 //#region src/types.d.ts
 interface Logger {
   log(message: string, ...optionalParams: any[]): void;
-  info(message: string, ...optionalParams: any[]): void;
   error(message: string, ...optionalParams: any[]): void;
+  info?(message: string, ...optionalParams: any[]): void;
   warn?(message: string, ...optionalParams: any[]): void;
   debug?(message: string, ...optionalParams: any[]): void;
 }
@@ -14,7 +14,7 @@ interface FlinksApiConfiguration {
   url: string;
   apiKey: string;
   authKey: string;
-  authorization: string;
+  bearerToken: string;
   axiosInstance?: AxiosInstance;
   logger?: Logger;
 }
@@ -262,7 +262,7 @@ interface FlinksDeleteOptions extends FlinksDataOptions {}
 declare enum FlinksHeaderOptions {
   AuthKey = "AuthKey",
   ApiKey = "ApiKey",
-  Authorization = "Authorization",
+  BearerToken = "BearerToken",
 }
 /**
  * This could probably be extensible, for the different Security Types
@@ -493,7 +493,7 @@ declare class FlinksApi {
   protected url: string;
   protected apiKey: string;
   protected authKey: string;
-  protected authorization: string;
+  protected bearerToken: string;
   protected axios: AxiosInstance;
   protected logger: Required<Logger>;
   private REQUEST_TIMEOUT;
