@@ -1,6 +1,6 @@
 {
   "name": "flinks-api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "TypeScript wrapper for Flinks API, designed primarily for Nest.js Integration. Developed to work for Clove-Financial, but expanded personally by Jeremy Cox.",
   "keywords": [
     "flinks",
