@@ -216,5 +216,3 @@ export class FlinksUsApiService extends FlinksApi {
 
 * [Flinks](https://www.flinks.com/)
 * [Flinks API Documentation](https://docs.flinks.com/reference/flinks-api)
-* [Jeremy Cox](https://jcox.ca)
-* [Clove Financial](https://helloclove.com)
